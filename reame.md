@@ -1,0 +1,1 @@
+This is a ERC20 extended token project based on web3
