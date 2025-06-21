@@ -7,15 +7,17 @@ async function main() {
   const [deployer, feeRecipient] = await ethers.getSigners();
 
   console.log("Deploying contracts with the account:", deployer.address);
+  console.log("The feeRecipient account is:", feeRecipient.address);
+
   console.log(
     "Account balance:",
     (await deployer.provider!.getBalance(deployer.address)).toString()
   );
 
   // Contract parameters
-  const name = "FeeToken";
-  const symbol = "FEET";
-  const totalSupply = 1_000_000; // 1 million tokens
+  const name = "MyNewToken";
+  const symbol = "MNT";
+  const totalSupply =20_000_000;
   const feeRecipientAddress = feeRecipient.address;
   const initialOwner = deployer.address;
 
@@ -29,12 +31,14 @@ async function main() {
     initialOwner
   )) as Erc20;
 
+
+console.log("Wait for a moment the contract is being deployed .....")
   await token.waitForDeployment();
+console.log("Contract deployment is complete!!")
 
   const tokenAddress = await token.getAddress();
-  console.log("Erc20 deployed to:", tokenAddress);
-  console.log("Fee recipient:", feeRecipientAddress);
-  console.log("Total supply:", totalSupply);
+  console.log("Erc20 deployed to(contract address):", tokenAddress);
+
 
   // Verify deployment
   const deployedTotalSupply = await token.totalSupply();
@@ -59,7 +63,7 @@ async function main() {
     deployedAt: new Date().toISOString(),
   };
 
-  const frontendDir = path.join(__dirname, "..", "frontend", "src", "contracts");
+  const frontendDir = path.join(__dirname, "..","..","frontend", "src", "contracts");
   if (!fs.existsSync(frontendDir)) {
     fs.mkdirSync(frontendDir, { recursive: true });
   }
@@ -79,8 +83,12 @@ async function main() {
     "Erc20.sol",
     "Erc20.json"
   );
+
+  //It reads the file called Erc20.json which is inside ../artifacts/contracts/Erc20.sol/Erc20.json  
+  
   const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
 
+  //From the above copied or read content it creates or writes to the file Erc20.json
   fs.writeFileSync(
     path.join(frontendDir, "Erc20.json"),
     JSON.stringify(artifact, null, 2)
@@ -89,17 +97,17 @@ async function main() {
   console.log("Contract ABI saved to frontend/src/contracts/Erc20.json");
 
   // Give some tokens to the deployer for testing
-  console.log("\nGiving tokens to deployer for testing...");
-  await token.giveMeOneFullToken();
-  const deployerBalance = await token.balanceOf(deployer.address);
-  console.log("Deployer balance:", ethers.formatEther(deployerBalance), "tokens");
+  // console.log("\nGiving tokens to deployer for testing...");
+  // await token.giveMeOneFullToken();
+  // const deployerBalance = await token.balanceOf(deployer.address);
+  // console.log("Deployer balance:", ethers.formatEther(deployerBalance), "tokens");
 
   // Give test tokens to fee recipient if local
-  if (network.name === "localhost" || network.name === "hardhat") {
-    await token.giveTokens(feeRecipientAddress, ethers.parseEther("100"));
-    const feeRecipientBalance = await token.balanceOf(feeRecipientAddress);
-    console.log("Fee recipient balance:", ethers.formatEther(feeRecipientBalance), "tokens");
-  }
+  // if (network.name === "localhost" || network.name === "hardhat") {
+  //   await token.giveTokens(feeRecipientAddress, ethers.parseEther("100"));
+  //   const feeRecipientBalance = await token.balanceOf(feeRecipientAddress);
+  //   console.log("Fee recipient balance:", ethers.formatEther(feeRecipientBalance), "tokens");
+  // }
 
   console.log("\nDeployment completed successfully!");
 }
