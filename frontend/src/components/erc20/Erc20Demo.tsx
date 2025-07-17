@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ethers, BrowserProvider, Contract } from 'ethers';
 import { Wallet, Send, Coins, RefreshCw, AlertCircle, CheckCircle, Copy } from 'lucide-react';
 
-import DeploymentDetail from "../contracts/deployment.json";
-import ABI from "../contracts/Erc20.json";
+import DeploymentDetail from "../../contracts/deployment.json";
+import ABI from "../../contracts/Erc20.json";
 
 const CONTRACT_ABI = ABI.abi;
 const MOCK_CONTRACT_ADDRESS = (DeploymentDetail as { address: string }).address;
