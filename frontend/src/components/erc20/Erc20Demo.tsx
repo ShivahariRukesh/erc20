@@ -3,10 +3,10 @@ import { ethers, BrowserProvider, Contract } from 'ethers';
 import { Wallet, Send, Coins, RefreshCw, AlertCircle, CheckCircle, Copy } from 'lucide-react';
 
 import DeploymentDetail from "../../contracts/deployment.json";
-import ABI from "../../contracts/Erc20.json";
+import ContractErc20 from "../../contracts/Erc20.json";
 
-const CONTRACT_ABI = ABI.abi;
-const MOCK_CONTRACT_ADDRESS = (DeploymentDetail as { address: string }).address;
+const CONTRACT_ABI = ContractErc20.abi;
+const CONTRACT_ADDRESS = (DeploymentDetail as { address: string }).address;
 
 type MessageType = 'success' | 'error' | 'info' | '';
 
@@ -48,8 +48,24 @@ const Erc20Demo: React.FC = () => {
         const web3Provider = new ethers.BrowserProvider((window as any).ethereum);
         setProvider(web3Provider);
 
+        const network = await web3Provider.getNetwork();
+        const chainId = Number(network.chainId);
+  
+        // Identify the network
+        switch (chainId) {
+          case 31337:
+            console.log('Connected to Hardhat local network.', 'info');
+            break;
+          case 11155111:
+            console.log('Connected to Sepolia testnet.', 'info');
+            break;
+          default:
+            console.log(`Connected to unknown network (chainId: ${chainId}).`);
+            break;
+        }
+        
         const contractInstance = new ethers.Contract(
-          MOCK_CONTRACT_ADDRESS,
+          CONTRACT_ADDRESS,
           CONTRACT_ABI,
           web3Provider
         );

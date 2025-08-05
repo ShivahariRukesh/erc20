@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-
-// Mock components for demonstration
-
+import ContractAbi from '../../contracts/Erc20.json';
+import ContractDetails from '../../contracts/deployment.json';
+import { BrowserProvider, Contract, ethers } from 'ethers';
+import GetBalanceAddress from '../../components/ReadingFromBlockchain/GetBalanceAddress';
+import TransferToken from '../../components/WritingToBlockchain/TransferToken';
 
 declare global {
   interface Window {
@@ -9,14 +11,15 @@ declare global {
   }
 }
 
+const ABI = ContractAbi.abi;
+
 const Erc20: React.FC = () => {
   const [accounts, setAccounts] = useState<string[]>();
   const [connectedAccount, setConnectedAccount] = useState<string>();
-  const [provider, setProvider] = useState<any>(null);
-  const [contract, setContract] = useState<any>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  const [contract, setContract] = useState<Contract | null>(null);
   const [tokenInfo, setTokenInfo] = useState<{name?: string, symbol?: string, decimals?: number}>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [getBalanceOf, setGetBalanceOf] = useState<string>("");
 
   /**
    * Check if wallet is already connected and update state
@@ -67,10 +70,26 @@ const Erc20: React.FC = () => {
     if (!window.ethereum) return;
 
     try {
-      // Mock contract initialization
-      setProvider({});
-      setContract({});
-      console.log('Contract initialized');
+      const web3Provider = new ethers.BrowserProvider(window.ethereum);
+
+      setProvider(web3Provider);
+
+
+      
+      const signer = await web3Provider.getSigner();
+      
+      // Optionally, you can verify chain ID or name here
+      const network = await web3Provider.getNetwork();
+      console.log('Connected to network:', network.name, `Chain ID: ${network.chainId}`);
+
+      const contractInstance = new Contract(
+        ContractDetails.address, // Ensure this matches the current network
+        ABI,
+        signer
+      );
+
+      setContract(contractInstance);
+      console.log('Contract initialized:', contractInstance);
     } catch (error) {
       console.error('Failed to initialize contract:', error);
     }
@@ -105,13 +124,17 @@ const Erc20: React.FC = () => {
 
     try {
       setIsLoading(true);
-      // Mock token info
-      setTimeout(() => {
-        setTokenInfo({ name: 'Sample Token', symbol: 'SMPL', decimals: 18 });
-        setIsLoading(false);
-      }, 1000);
+      const [name, symbol, decimals] = await Promise.all([
+        contract.name(),
+        contract.symbol(),
+        contract.decimals()
+      ]);
+      
+      setTokenInfo({ name, symbol, decimals: Number(decimals) });
+      console.log('Token info:', { name, symbol, decimals: Number(decimals) });
     } catch (error) {
       console.error('Error getting token info:', error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -131,7 +154,7 @@ const Erc20: React.FC = () => {
               className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-2.5 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
             >
               <span className="relative z-10 font-medium">
-                {connectedAccount ? 'Connected' : 'Connect Wallet'}
+                Connect Wallet
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
@@ -171,12 +194,12 @@ const Erc20: React.FC = () => {
                 <h2 className="text-xl font-semibold text-green-400">Transfer Tokens</h2>
               </div>
               
-              {/* <TransferToken 
+              <TransferToken 
                 setIsLoading={setIsLoading} 
                 isLoading={isLoading} 
                 connectedAccount={connectedAccount} 
                 contract={contract}
-              /> */}
+              />
             </div>
           </div>
 
@@ -235,11 +258,10 @@ const Erc20: React.FC = () => {
                 {/* Balance Check */}
                 <div className="border-t border-gray-700/50 pt-6">
                   <h3 className="text-lg font-semibold mb-4 text-blue-300">Check Balance</h3>
-                  {/* <GetBalanceAddress 
-                    getBalanceOf={getBalanceOf}  
-                    setGetBalanceOf={setGetBalanceOf} 
+                  <GetBalanceAddress 
+            
                     contract={contract}
-                  /> */}
+                  />
                 </div>
               </div>
             </div>
