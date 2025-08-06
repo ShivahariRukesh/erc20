@@ -4,6 +4,7 @@ import ContractDetails from '../../contracts/deployment.json';
 import { BrowserProvider, Contract, ethers } from 'ethers';
 import GetBalanceAddress from '../../components/ReadingFromBlockchain/GetBalanceAddress';
 import TransferToken from '../../components/WritingToBlockchain/TransferToken';
+import TokenInformation from '../ReadingFromBlockchain/TokenInformation';
 
 declare global {
   interface Window {
@@ -116,7 +117,8 @@ const Erc20: React.FC = () => {
     initiateContract();
   }, [initiateContract]);
 
-  const handleGetInfo = async () => {
+  const handleGetInfo = async (e) => {
+    e.preventDefault()
     if (!contract) {
       console.error('Contract not initialized');
       return;
@@ -220,7 +222,7 @@ const Erc20: React.FC = () => {
                 {/* Token Info Section */}
                 <div className="space-y-4">
                   <button 
-                    onClick={handleGetInfo} 
+                    onClick={(e)=>handleGetInfo(e)} 
                     disabled={isLoading || !contract}
                     className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
                   >
@@ -237,26 +239,13 @@ const Erc20: React.FC = () => {
                   {tokenInfo.name && (
                     <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 animate-fadeIn">
                       <h3 className="text-lg font-semibold mb-3 text-blue-300">Token Information</h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400">Name:</span>
-                          <span className="font-medium">{tokenInfo.name}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400">Symbol:</span>
-                          <span className="font-medium">{tokenInfo.symbol}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400">Decimals:</span>
-                          <span className="font-medium">{tokenInfo.decimals}</span>
-                        </div>
-                      </div>
+<TokenInformation tokenInfo= {tokenInfo}/>
                     </div>
                   )}
                 </div>
 
                 {/* Balance Check */}
-                <div className="border-t border-gray-700/50 pt-6">
+                <div className=" border-t border-gray-700/50 pt-6">
                   <h3 className="text-lg font-semibold mb-4 text-blue-300">Check Balance</h3>
                   <GetBalanceAddress 
             
