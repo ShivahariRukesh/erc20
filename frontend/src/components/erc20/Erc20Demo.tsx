@@ -445,9 +445,9 @@ const Erc20Demo: React.FC = () => {
                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                   <span className="text-gray-300">Contract Address:</span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-white font-mono">{formatAddress(MOCK_CONTRACT_ADDRESS)}</span>
+                    <span className="text-white font-mono">{formatAddress(CONTRACT_ADDRESS)}</span>
                     <button
-                      onClick={() => copyToClipboard(MOCK_CONTRACT_ADDRESS)}
+                      onClick={() => copyToClipboard(CONTRACT_ADDRESS)}
                       className="text-blue-400 hover:text-blue-300"
                     >
                       <Copy size={16} />
