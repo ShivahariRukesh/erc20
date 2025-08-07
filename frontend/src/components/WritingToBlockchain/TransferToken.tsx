@@ -22,10 +22,10 @@ console.error('Amount and address are required');
 return;
  }
 // Validate Ethereum address format
-// if (!ethers.isAddress(address)) {
-// console.error('Invalid Ethereum address format');
-// return;
-// }
+if (!ethers.isAddress(address)) {
+console.error('Invalid Ethereum address format');
+return;
+}
 try {
 setIsLoading(true);
 // Get token decimals for proper amount conversion
@@ -53,22 +53,27 @@ setIsLoading(false);
 return (
 
     <div className="space-y-4">
+    <form onSubmit={(e)=>handleTransfer(e)} >
     <input
       type="text"
       placeholder="Recipient address"
       className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 outline-none"
-    />
+      name='address'
+      />
     <input
       type="number"
       placeholder="Amount"
       className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 outline-none"
-    />
+      name='amount'
+      />
     <button 
       disabled={isLoading || !contract}
       className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
+      type='submit'
+      >
       {isLoading ? 'Processing...' : 'Transfer'}
     </button>
+      </form>
   </div>
  )
 }

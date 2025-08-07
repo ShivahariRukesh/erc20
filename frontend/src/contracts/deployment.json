@@ -1,11 +1,11 @@
 {
-  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "address": "0x6161B9B65F57d54189AB3eD215971cd4cA322A4f",
   "name": "MyNewToken",
   "symbol": "MNT",
   "totalSupply": 20000000,
-  "feeRecipient": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "network": "localhost",
-  "chainId": 31337,
-  "deployedAt": "2025-08-06T08:45:10.659Z"
+  "feeRecipient": "0x10E9c58dE1dF44d75897874db9870f07f8B1afe1",
+  "owner": "0x41E665a471c5e1eE90BBa89d9dabbF046366b577",
+  "network": "sepolia",
+  "chainId": 11155111,
+  "deployedAt": "2025-08-07T06:46:50.032Z"
 }
